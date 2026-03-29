@@ -3,15 +3,24 @@
 <head>
     <meta charset="utf-8">
     <title>折叠床拖动交互 - r182本地版</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { margin: 0; overflow: hidden; background: radial-gradient(circle at center, #6495ED 0%, #1E3A8A 50%); }
         canvas { display: block; }
         .tip { position: fixed; top: 10px; left: 10px; color: #fff; font-size: 14px; }
     </style>
+    <!-- 预加载关键资源 -->
+    <link rel="preload" href="./bed.glb" as="fetch" crossorigin>
+    <link rel="preload" href="https://unpkg.com/three@0.182.0/build/three.module.js" as="script">
+    <link rel="preload" href="https://unpkg.com/three@0.182.0/examples/jsm/loaders/GLTFLoader.js" as="script">
+    <link rel="preload" href="https://unpkg.com/three@0.182.0/examples/jsm/controls/OrbitControls.js" as="script">
+    <link rel="preload" href="https://unpkg.com/three@0.182.0/examples/jsm/controls/DragControls.js" as="script">
+    <link rel="preload" href="https://unpkg.com/three@0.182.0/examples/jsm/loaders/DRACOLoader.js" as="script">
     <script type="importmap">
     {
         "imports": {
-            "three": "./three.module.js"
+            "three": "https://unpkg.com/three@0.182.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.182.0/examples/jsm/"
         }
     }
     </script>
@@ -21,10 +30,10 @@
     <script type="module">
         // ✅ 适配r182：使用importmap别名
         import * as THREE from 'three';
-        import { GLTFLoader } from './jsm/loaders/GLTFLoader.js';
-        import { DRACOLoader } from './jsm/loaders/DRACOLoader.js';
-        import { DragControls } from './jsm/controls/DragControls.js';
-        import { OrbitControls } from './jsm/controls/OrbitControls.js';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+        import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+        import { DragControls } from 'three/addons/controls/DragControls.js';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
         // 1. 初始化场景/相机/渲染器
         const scene = new THREE.Scene();
