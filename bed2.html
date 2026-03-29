@@ -351,7 +351,7 @@
 
         // 5. 加载GLB模型（必须加./，r182路径规则不变）
         const dracoLoader = new DRACOLoader();
-        dracoLoader.setDecoderPath('./jsm/libs/draco/');
+        dracoLoader.setDecoderPath('https://unpkg.com/three@0.182.0/examples/jsm/libs/draco/');
 
         const loader = new GLTFLoader();
         loader.setDRACOLoader(dracoLoader);
