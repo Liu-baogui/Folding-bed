@@ -592,7 +592,7 @@
                         const deltaY = dragStartMouseY - event.clientY;
                         
                         // 计算bedA的新位置（这里可以根据需要调整灵敏度）
-                        let newBedAY = dragStartY + deltaY * 15; // 调整灵敏度
+                        let newBedAY = dragStartY + deltaY * 18; // 调整灵敏度
                         
                         // 严格限制移动范围：只能向下拖动，最大距离 1242mm
                         const minY = bedA.userData.initialY - totalMoveDistance;
@@ -684,7 +684,7 @@
                         const deltaY = dragStartMouseY - touch.clientY;
                         
                         // 计算bedA的新位置（这里可以根据需要调整灵敏度）
-                        let newBedAY = dragStartY + deltaY * 15; // 调整灵敏度
+                        let newBedAY = dragStartY + deltaY * 18; // 调整灵敏度
                         
                         // 严格限制移动范围：只能向下拖动，最大距离 1242mm
                         const minY = bedA.userData.initialY - totalMoveDistance;
