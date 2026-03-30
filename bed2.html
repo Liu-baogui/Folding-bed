@@ -7,7 +7,79 @@
     <style>
         body { margin: 0; overflow: hidden; background: radial-gradient(circle at center, #6495ED 0%, #1E3A8A 50%); }
         canvas { display: block; }
-        .tip { position: fixed; top: 10px; left: 10px; color: #fff; font-size: 14px; }
+        .tip { position: fixed; top: 10px; left: 10px; color: #fff; font-size: 14px; z-index: 100; }
+        
+        /* 封面样式 */
+        .cover { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: radial-gradient(circle at center, #6495ED 0%, #1E3A8A 50%); 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 9999; 
+            transition: opacity 1s ease-out; 
+        }
+        
+        .cover h1 { 
+            color: white; 
+            font-size: 48px; 
+            font-family: Arial, sans-serif; 
+            margin-bottom: 60px; 
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3); 
+        }
+        
+        /* 圆形旋转载入动画 */
+        .loader { 
+            width: 60px; 
+            height: 60px; 
+            position: relative; 
+        }
+        
+        .loader::before, .loader::after { 
+            content: ''; 
+            position: absolute; 
+            border: 4px solid rgba(255, 255, 255, 0.3); 
+            border-radius: 50%; 
+        }
+        
+        .loader::before { 
+            width: 60px; 
+            height: 60px; 
+            border-top: 4px solid white; 
+            animation: spin 1s linear infinite; 
+        }
+        
+        .loader::after { 
+            width: 40px; 
+            height: 40px; 
+            top: 10px; 
+            left: 10px; 
+            border-bottom: 4px solid white; 
+            animation: spin-reverse 1s linear infinite; 
+        }
+        
+        /* 旋转动画 */
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+        
+        /* 反向旋转动画 */
+        @keyframes spin-reverse { 
+            0% { transform: rotate(360deg); } 
+            100% { transform: rotate(0deg); } 
+        }
+        
+        /* 隐藏封面的类 */
+        .cover.hidden { 
+            opacity: 0; 
+            pointer-events: none; 
+        }
     </style>
     <!-- 预加载关键资源 -->
     <link rel="preload" href="./bed.glb" as="fetch" crossorigin>
@@ -27,6 +99,13 @@
 </head>
 <body>
     <div class="tip">鼠标拖动床尾床体自动展开/折叠动画演示</div>
+    
+    <!-- 封面 -->
+    <div class="cover" id="cover">
+        <h1>折叠床/学习桌</h1>
+        <div class="loader"></div>
+    </div>
+    
     <script type="module">
         // ✅ 适配r182：使用importmap别名
         import * as THREE from 'three';
@@ -737,7 +816,13 @@
                         console.log('取消拖动 bedA（触摸）');
                     }
                 });
-
+                
+                // 自动隐藏封面（3秒后）
+                setTimeout(function() {
+                    document.getElementById('cover').classList.add('hidden');
+                    console.log('自动隐藏封面');
+                }, 3000);
+                
             },
             (xhr) => {
                 // 加载进度
