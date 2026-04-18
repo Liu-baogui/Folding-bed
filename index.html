@@ -501,25 +501,33 @@
             rotatingObj.quaternion.copy(R1);
         }
 
+        console.time('TotalLoad');
+        console.time('ThreeJS');
         // 5. 加载GLB模型（必须加./，r182路径规则不变）
         const dracoLoader = new DRACOLoader();
         dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.182.0/examples/jsm/libs/draco/');
 
         const loader = new GLTFLoader();
         loader.setDRACOLoader(dracoLoader);
+        console.timeEnd('ThreeJS');
+        console.time('ModelLoad');
         loader.load(
             './bed.glb', // 替换为实际模型名，比如./bed_model.glb
             (gltf) => {
+                console.timeEnd('ModelLoad');
+                console.time('Processing');
                 const model = gltf.scene;
                 scene.add(model);
                 console.log('✅ r182模型加载成功！');
 
                 // 计算模型包围盒
+                console.time('BoundingBox');
                 const box = new THREE.Box3().setFromObject(model);
                 const center = box.getCenter(new THREE.Vector3());
                 const size = box.getSize(new THREE.Vector3());
                 console.log('模型尺寸:', size);
                 console.log('模型中心点:', center);
+                console.timeEnd('BoundingBox');
 
                 // 调整模型初始位置（居中）
                 model.position.set(-center.x, -center.y, -center.z);
