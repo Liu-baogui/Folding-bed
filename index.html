@@ -678,17 +678,7 @@
                     }
                 });
 
-                console.log('准备创建 DragControls...');
-                
-                // 只允许拖动 bedA 本身，视角控制由轨道控制器处理
-                const draggableObjects = [bedA];
-                
-                // 拖动控制器（只包含 bedA）- 禁用，使用自定义拖动逻辑
-                const dragControls = new DragControls(draggableObjects, camera, renderer.domElement);
-                dragControls.enabled = false; // 禁用DragControls，使用自定义拖动逻辑
-                // 命中子 Mesh 时只改子物体位置再同步到 bedA；勿用 transformGroup（会选到最外层 Group，整模被拖走）
-                dragControls.recursive = true;
-                dragControls.transformGroup = false;
+                console.log('准备创建拖动系统...');
                 
                 // 辅助函数：检查对象是否是 bedA 的后代
                 function isDescendant(parent, child) {
