@@ -140,12 +140,16 @@
     </style>
     <!-- 预加载关键资源 -->
     <link rel="preload" href="./bed.glb" as="fetch" crossorigin>
-    <link rel="preload" href="./jsm/libs/draco/draco_decoder.wasm" as="fetch" crossorigin>
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/three@0.182.0/build/three.module.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/three@0.182.0/examples/jsm/loaders/GLTFLoader.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/three@0.182.0/examples/jsm/controls/OrbitControls.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/three@0.182.0/examples/jsm/loaders/DRACOLoader.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/three@0.182.0/examples/jsm/libs/draco/draco_decoder.wasm" as="fetch" crossorigin>
     <script type="importmap">
     {
         "imports": {
-            "three": "./jsm/three.module.js",
-            "three/addons/": "./jsm/"
+            "three": "https://cdn.jsdelivr.net/npm/three@0.182.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.182.0/examples/jsm/"
         }
     }
     </script>
@@ -499,7 +503,7 @@
 
         // 5. 加载GLB模型（必须加./，r182路径规则不变）
         const dracoLoader = new DRACOLoader();
-        dracoLoader.setDecoderPath('./jsm/libs/draco/');
+        dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.182.0/examples/jsm/libs/draco/');
 
         const loader = new GLTFLoader();
         loader.setDRACOLoader(dracoLoader);
