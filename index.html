@@ -140,11 +140,6 @@
     </style>
     <!-- 预加载关键资源 -->
     <link rel="preload" href="./bed.glb" as="fetch" crossorigin>
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/three@0.182.0/build/three.module.js" as="script" crossorigin="anonymous">
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/three@0.182.0/examples/jsm/loaders/GLTFLoader.js" as="script" crossorigin="anonymous">
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/three@0.182.0/examples/jsm/controls/OrbitControls.js" as="script" crossorigin="anonymous">
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/three@0.182.0/examples/jsm/loaders/DRACOLoader.js" as="script" crossorigin="anonymous">
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/three@0.182.0/examples/jsm/libs/draco/draco_decoder.wasm" as="fetch" crossorigin="anonymous">
     <script type="importmap">
     {
         "imports": {
@@ -183,8 +178,6 @@
         // ✅ 适配r182：使用importmap别名
         import * as THREE from 'three';
         import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-        import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
-        import { DragControls } from 'three/addons/controls/DragControls.js';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
         // 1. 初始化场景/相机/渲染器
@@ -503,12 +496,8 @@
 
         console.time('TotalLoad');
         console.time('ThreeJS');
-        // 5. 加载GLB模型（必须加./，r182路径规则不变）
-        const dracoLoader = new DRACOLoader();
-        dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.182.0/examples/jsm/libs/draco/');
-
+        // 5. 加载GLB模型（无需Draco压缩）
         const loader = new GLTFLoader();
-        loader.setDRACOLoader(dracoLoader);
         console.timeEnd('ThreeJS');
         console.time('ModelLoad');
         loader.load(
