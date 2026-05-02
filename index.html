@@ -509,7 +509,151 @@
                 scene.add(model);
                 console.log('✅ r182模型加载成功！');
 
-                // 计算模型包围盒
+                // 打印模型结构（调试用）
+                console.log('=== 模型结构 ===');
+                model.traverse((child) => {
+                    if (child.name && child.name !== '') {
+                        const depth = (child.parent) ? child.parent.name + '/' : '';
+                        console.log(`  ${depth}${child.name}`);
+                    }
+                });
+                console.log('=== 模型结构结束 ===');
+                
+                // 辅助函数：递归查找子对象
+                function findChildByName(parent, name) {
+                    let result = null;
+                    parent.traverse((child) => {
+                        if (child.name === name && !result) {
+                            result = child;
+                        }
+                    });
+                    return result;
+                }
+                
+                // 部件渐显动画
+                function fadeInParts() {
+                    // 渐显顺序：zhuojia→zhuomian→zhuodou→ 床的部件
+                    // recursive: true表示递归显示所有子对象，false表示只显示当前部件
+                    const partsToShow = [
+                        { name: 'zhuojia', recursive: true },
+                        { name: 'zhuomian', recursive: true },
+                        { name: 'zhuodou', recursive: true },
+                        { name: 'bedH', recursive: true },
+                        { name: 'bedG', recursive: true },
+                        { name: 'bedF', recursive: true },
+                        { name: 'baseE', recursive: false },  // 不递归显示，避免bedD跟着显示
+                        { name: 'bedD', recursive: true },
+                        { name: 'bedC', recursive: true },
+                        { name: 'bedB', recursive: true },
+                        { name: 'bedA', recursive: true }    // 递归显示所有子组件
+                    ];
+                    const fadeDuration = 500; // 每个部件淡入时长
+                    const delayBetweenParts = 1000; // 部件间隔时间（1秒）
+                    
+                    // 先隐藏所有Mesh（全局隐藏）
+                    model.traverse((child) => {
+                        if (child.isMesh) {
+                            child.material.opacity = 0;
+                            child.material.transparent = true;
+                        }
+                    });
+                    console.log('🔴 全局隐藏所有Mesh');
+                    
+                    // 逐个淡入部件（根据recursive参数决定是否递归显示子对象）
+                    partsToShow.forEach((item, index) => {
+                        setTimeout(() => {
+                            let part;
+                            if (item.parent) {
+                                const parent = model.getObjectByName(item.parent);
+                                if (parent) {
+                                    part = findChildByName(parent, item.name);
+                                }
+                            } else {
+                                part = model.getObjectByName(item.name);
+                            }
+                            
+                            if (part) {
+                                console.log(`🌀 渐显部件(${index}秒): ${item.parent ? item.parent + '/' : ''}${item.name} (${item.recursive ? '递归' : '不递归'})`);
+                                
+                                if (item.recursive) {
+                                    // 递归显示所有子Mesh
+                                    part.traverse((child) => {
+                                        if (child.isMesh) {
+                                            animateFadeIn(child.material);
+                                        }
+                                    });
+                                } else {
+                                    // 只显示当前部件的直接Mesh，不递归显示子对象的Mesh
+                                    if (part.isMesh) {
+                                        animateFadeIn(part.material);
+                                    } else {
+                                        part.children.forEach((child) => {
+                                            if (child.isMesh) {
+                                                animateFadeIn(child.material);
+                                            }
+                                        });
+                                    }
+                                }
+                            } else {
+                                console.warn(`⚠️ 未找到部件: ${item.parent ? item.parent + '/' : ''}${item.name}`);
+                            }
+                        }, index * delayBetweenParts);
+                    });
+                    
+                    // 所有部件渐显完成后，整体旋转360度
+                    const totalFadeTime = partsToShow.length * delayBetweenParts;
+                    setTimeout(() => {
+                        console.log('🔄 开始整体旋转360度');
+                        rotateModel360();
+                    }, totalFadeTime + 500); // 等待最后一个部件淡入完成后再旋转
+                }
+                
+                // 淡入动画辅助函数
+                function animateFadeIn(material) {
+                    const startOpacity = material.opacity || 0;
+                    const endOpacity = 1;
+                    const fadeDuration = 500;
+                    const startTime = Date.now();
+                    
+                    function animate() {
+                        const elapsed = Date.now() - startTime;
+                        const progress = Math.min(elapsed / fadeDuration, 1);
+                        material.opacity = startOpacity + (endOpacity - startOpacity) * progress;
+                        
+                        if (progress < 1) {
+                            requestAnimationFrame(animate);
+                        }
+                    }
+                    animate();
+                }
+                
+                // 整体旋转360度动画
+                function rotateModel360() {
+                    const startRotation = model.rotation.y;
+                    const endRotation = startRotation + Math.PI * 2; // 360度
+                    const duration = 3000; // 3秒完成旋转
+                    const startTime = Date.now();
+                    
+                    function animate() {
+                        const elapsed = Date.now() - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        model.rotation.y = startRotation + (endRotation - startRotation) * progress;
+                        
+                        if (progress < 1) {
+                            requestAnimationFrame(animate);
+                        }
+                    }
+                    animate();
+                }
+                
+                // 执行渐显动画
+                fadeInParts();
+                
+                // 渐显动画开始后立即隐藏封面（让用户看到渐显效果）
+                setTimeout(function() {
+                    document.getElementById('cover').classList.add('hidden');
+                    console.log('自动隐藏封面');
+                }, 500);
                 console.time('BoundingBox');
                 const box = new THREE.Box3().setFromObject(model);
                 const center = box.getCenter(new THREE.Vector3());
@@ -876,13 +1020,6 @@
                         console.log('取消拖动 bedA（触摸）');
                     }
                 });
-                
-                // 自动隐藏封面（3秒后）
-                setTimeout(function() {
-                    document.getElementById('cover').classList.add('hidden');
-                    console.log('自动隐藏封面');
-                }, 3000);
-                
             },
             (xhr) => {
                 // 加载进度
